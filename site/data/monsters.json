@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Original Green",
+    "flavorProfile": "Sweet, salty, and a little bit sour",
+    "tier": "A",
+    "imagePath": "/images/original-green.webp",
+    "notes": "The classic that started it all."
+  },
+  {
+    "id": 2,
+    "name": "Pipeline Punch",
+    "flavorProfile": "Passion fruit, orange, and guava",
+    "tier": "S",
+    "imagePath": "/images/pipeline-punch.webp",
+    "notes": "Incredibly smooth and sweet."
+  },
+  {
+    "id": 3,
+    "name": "Mango Loco",
+    "flavorProfile": "Mango juice blend",
+    "tier": "S",
+    "imagePath": "/images/mango-loco.webp",
+    "notes": "One of the best Juice Monster flavors."
+  },
+  {
+    "id": 4,
+    "name": "Ultra Sunrise",
+    "flavorProfile": "Crisp citrus and orange",
+    "tier": "B",
+    "imagePath": "/images/ultra-sunrise.webp",
+    "notes": "Great for morning energy."
+  },
+  {
+    "id": 5,
+    "name": "Assault",
+    "flavorProfile": "Cola blend",
+    "tier": "C",
+    "imagePath": "/images/assault.webp",
+    "notes": "Acquired taste."
+  }
+]
