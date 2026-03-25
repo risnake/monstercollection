@@ -6,12 +6,9 @@ import Image from "next/image";
 import {
   Zap,
   List,
-  Grid3X3,
   Package,
   Star,
   Hash,
-  ChevronDown,
-  Check,
   X,
 } from "lucide-react";
 import catalogData from "../../data/catalog.json";
@@ -21,17 +18,7 @@ import {
   InventoryEntry,
   MonsterWithInventory,
   Tier,
-  Category,
 } from "../types";
-
-const CATEGORIES: { key: Category | "all"; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "original", label: "Original" },
-  { key: "ultra", label: "Ultra" },
-  { key: "juice", label: "Juice" },
-  { key: "cafe", label: "Cafe" },
-  { key: "rehab", label: "Rehab" },
-];
 
 const TIER_COLORS: Record<Tier, { text: string; bg: string; border: string; glow: string }> = {
   S: { text: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/50", glow: "shadow-[0_0_15px_rgba(239,68,68,0.3)]" },
@@ -42,13 +29,12 @@ const TIER_COLORS: Record<Tier, { text: string; bg: string; border: string; glow
   F: { text: "text-gray-400", bg: "bg-gray-500/10", border: "border-gray-500/50", glow: "shadow-[0_0_15px_rgba(156,163,175,0.3)]" },
 };
 
-type View = "catalog" | "inventory" | "tier";
+type View = "inventory" | "tier";
 
 export default function Home() {
   const [catalog, setCatalog] = useState<CatalogMonster[]>([]);
   const [inventory, setInventory] = useState<InventoryEntry[]>([]);
-  const [view, setView] = useState<View>("catalog");
-  const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
+  const [view, setView] = useState<View>("inventory");
   const [selectedMonster, setSelectedMonster] = useState<MonsterWithInventory | null>(null);
 
   useEffect(() => {
@@ -56,24 +42,14 @@ export default function Home() {
     setInventory(inventoryData as InventoryEntry[]);
   }, []);
 
-  const monstersWithInventory: MonsterWithInventory[] = useMemo(() => {
-    return catalog.map((m) => ({
-      ...m,
-      inventory: inventory.find((inv) => inv.catalogId === m.id),
-    }));
+  const inventoryMonsters: MonsterWithInventory[] = useMemo(() => {
+    return catalog
+      .map((m) => ({
+        ...m,
+        inventory: inventory.find((inv) => inv.catalogId === m.id),
+      }))
+      .filter((m) => m.inventory) as MonsterWithInventory[];
   }, [catalog, inventory]);
-
-  const filteredMonsters = useMemo(() => {
-    let list = monstersWithInventory;
-    if (categoryFilter !== "all") {
-      list = list.filter((m) => m.category === categoryFilter);
-    }
-    return list;
-  }, [monstersWithInventory, categoryFilter]);
-
-  const inventoryMonsters = useMemo(() => {
-    return monstersWithInventory.filter((m) => m.inventory);
-  }, [monstersWithInventory]);
 
   const tiers: Tier[] = ["S", "A", "B", "C", "D", "F"];
 
@@ -101,7 +77,6 @@ export default function Home() {
 
           <nav className="flex items-center gap-2 sm:gap-3">
             {([
-              { key: "catalog" as View, icon: Grid3X3, label: "CATALOG" },
               { key: "inventory" as View, icon: Package, label: "MY CANS" },
               { key: "tier" as View, icon: List, label: "TIER LIST" },
             ]).map(({ key, icon: Icon, label }) => (
@@ -122,67 +97,22 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Stats Bar (inventory view) */}
-      {view === "inventory" && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border-b border-[#1a1a1a] bg-[#0c0c0c]"
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-center gap-6 sm:gap-12 text-xs sm:text-sm">
-            <Stat icon={<Package className="w-4 h-4" />} value={String(totalCans)} label="TOTAL CANS" />
-            <Stat icon={<Hash className="w-4 h-4" />} value={String(uniqueFlavors)} label="FLAVORS" />
-            <Stat icon={<Star className="w-4 h-4" />} value={avgRating} label="AVG RATING" />
-          </div>
-        </motion.div>
-      )}
-
-      {/* Category Filter (catalog view) */}
-      {view === "catalog" && (
-        <div className="border-b border-[#1a1a1a] bg-[#0c0c0c]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            {CATEGORIES.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setCategoryFilter(key)}
-                className={`px-3 py-1.5 text-xs border whitespace-nowrap transition-all duration-200 ${
-                  categoryFilter === key
-                    ? "border-[#90C53F] text-[#90C53F] bg-[#90C53F10]"
-                    : "border-[#333] text-[#666] hover:text-white hover:border-[#555]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-            <span className="ml-auto text-[#555] text-xs normal-case tracking-normal">
-              {filteredMonsters.length} flavors
-            </span>
-          </div>
+      {/* Stats Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="border-b border-[#1a1a1a] bg-[#0c0c0c]"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-center gap-6 sm:gap-12 text-xs sm:text-sm">
+          <Stat icon={<Package className="w-4 h-4" />} value={String(totalCans)} label="TOTAL CANS" />
+          <Stat icon={<Hash className="w-4 h-4" />} value={String(uniqueFlavors)} label="FLAVORS" />
+          <Stat icon={<Star className="w-4 h-4" />} value={avgRating} label="AVG RATING" />
         </div>
-      )}
+      </motion.div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <AnimatePresence mode="wait">
-          {view === "catalog" && (
-            <motion.div
-              key="catalog"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-            >
-              {filteredMonsters.map((monster, i) => (
-                <CatalogCard
-                  key={monster.id}
-                  monster={monster}
-                  index={i}
-                  onClick={() => setSelectedMonster(monster)}
-                />
-              ))}
-            </motion.div>
-          )}
-
           {view === "inventory" && (
             <motion.div
               key="inventory"
@@ -195,7 +125,7 @@ export default function Home() {
                   <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg">NO CANS IN YOUR COLLECTION</p>
                   <p className="text-sm mt-2 normal-case tracking-normal">
-                    Add monsters from the catalog to start your collection
+                    Add monsters to inventory.json to start your collection
                   </p>
                 </div>
               ) : (
@@ -260,68 +190,6 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
   );
 }
 
-/* ─── Catalog Card ─── */
-function CatalogCard({
-  monster,
-  index,
-  onClick,
-}: {
-  monster: MonsterWithInventory;
-  index: number;
-  onClick: () => void;
-}) {
-  const owned = !!monster.inventory;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: Math.min(index * 0.03, 0.5), duration: 0.3 }}
-      onClick={onClick}
-      className="group relative bg-[#111] border border-[#222] rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22]"
-    >
-      {/* Owned badge */}
-      {owned && (
-        <div className="absolute top-2 right-2 z-20 bg-[#90C53F] rounded-full p-1">
-          <Check className="w-3 h-3 text-black" />
-        </div>
-      )}
-
-      {/* Image */}
-      <div className="relative w-full aspect-[3/4] bg-[#0a0a0a] flex items-center justify-center overflow-hidden">
-        <Image
-          src={monster.imagePath}
-          alt={monster.name}
-          fill
-          className="object-contain p-3 group-hover:scale-110 transition-transform duration-500"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent" />
-      </div>
-
-      {/* Info */}
-      <div className="p-3">
-        <p className="text-xs sm:text-sm font-bold truncate group-hover:text-[#90C53F] transition-colors">
-          {monster.name}
-        </p>
-        <p className="text-[10px] text-[#666] mt-0.5 normal-case tracking-normal truncate">
-          {monster.flavorProfile}
-        </p>
-        <div className="mt-2 flex items-center justify-between">
-          <span className="text-[10px] px-2 py-0.5 border border-[#333] text-[#888] rounded-sm capitalize">
-            {monster.category}
-          </span>
-          {owned && monster.inventory && (
-            <span className="text-[10px] text-[#90C53F] font-bold">
-              x{monster.inventory.quantity}
-            </span>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 /* ─── Inventory Card ─── */
 function InventoryCard({
   monster,
@@ -341,7 +209,7 @@ function InventoryCard({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
       onClick={onClick}
-      className={`group flex gap-4 bg-[#111] border border-[#222] rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22]`}
+      className="group flex gap-4 bg-[#111] border border-[#222] rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22]"
     >
       {/* Image */}
       <div className="relative w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 bg-[#0a0a0a] rounded-md overflow-hidden">
@@ -373,14 +241,11 @@ function InventoryCard({
         </div>
 
         <div className="flex items-center gap-4 mt-3">
-          {/* Quantity */}
           <div className="flex items-center gap-1.5 text-xs text-[#888]">
             <Package className="w-3.5 h-3.5 text-[#90C53F]" />
             <span className="font-bold text-white">{inv.quantity}</span>
             <span className="text-[10px]">CANS</span>
           </div>
-
-          {/* Rating */}
           <div className="flex items-center gap-1.5 text-xs text-[#888]">
             <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
             <span className="font-bold text-white">{inv.rating}</span>
@@ -405,7 +270,7 @@ function TierRow({
   const style = TIER_COLORS[tier];
 
   return (
-    <div className={`flex flex-col sm:flex-row bg-[#0c0c0c] border border-[#222] rounded-lg overflow-hidden`}>
+    <div className="flex flex-col sm:flex-row bg-[#0c0c0c] border border-[#222] rounded-lg overflow-hidden">
       <div
         className={`w-full sm:w-20 sm:min-w-[5rem] flex items-center justify-center p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-[#222] ${style.bg} ${style.text} ${style.glow}`}
       >
@@ -461,7 +326,6 @@ function MonsterModal({
 
   return (
     <>
-      {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -470,14 +334,12 @@ function MonsterModal({
         className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
       />
 
-      {/* Modal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 40 }}
         className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-lg bg-[#111] border border-[#333] rounded-xl z-[70] overflow-hidden flex flex-col max-h-[90vh]"
       >
-        {/* Close */}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 z-10 p-1.5 bg-[#222] border border-[#444] rounded-md hover:bg-[#333] transition-colors"
@@ -485,7 +347,6 @@ function MonsterModal({
           <X className="w-4 h-4" />
         </button>
 
-        {/* Image */}
         <div className="relative w-full h-64 sm:h-72 bg-[#0a0a0a] flex-shrink-0">
           <Image
             src={monster.imagePath}
@@ -497,7 +358,6 @@ function MonsterModal({
           <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent" />
         </div>
 
-        {/* Content */}
         <div className="p-6 overflow-y-auto">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
@@ -524,7 +384,7 @@ function MonsterModal({
             <p className="mt-1">{monster.flavorProfile}</p>
           </div>
 
-          {inv ? (
+          {inv && tierStyle && (
             <div className="bg-[#0a0a0a] border border-[#222] rounded-lg p-4 space-y-3">
               <p className="text-[10px] text-[#90C53F] uppercase tracking-widest font-bold mb-2">
                 Your Collection
@@ -539,7 +399,7 @@ function MonsterModal({
                   <p className="text-[10px] text-[#666]">RATING</p>
                 </div>
                 <div className="text-center">
-                  <p className={`text-lg font-bold ${tierStyle?.text}`}>{inv.tier}</p>
+                  <p className={`text-lg font-bold ${tierStyle.text}`}>{inv.tier}</p>
                   <p className="text-[10px] text-[#666]">TIER</p>
                 </div>
               </div>
@@ -550,12 +410,6 @@ function MonsterModal({
               )}
               <p className="text-[10px] text-[#555] normal-case tracking-normal">
                 Added {inv.dateAdded}
-              </p>
-            </div>
-          ) : (
-            <div className="bg-[#0a0a0a] border border-dashed border-[#333] rounded-lg p-4 text-center">
-              <p className="text-xs text-[#555] normal-case tracking-normal">
-                Not in your collection yet
               </p>
             </div>
           )}
