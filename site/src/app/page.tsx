@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
@@ -43,10 +43,14 @@ export default function Home() {
   }, []);
 
   const inventoryMonsters: MonsterWithInventory[] = useMemo(() => {
+    const inventoryMap = new Map<string, InventoryEntry>();
+    for (const inv of inventory) {
+      inventoryMap.set(inv.catalogId, inv);
+    }
     return catalog
       .map((m) => ({
         ...m,
-        inventory: inventory.find((inv) => inv.catalogId === m.id),
+        inventory: inventoryMap.get(m.id),
       }))
       .filter((m) => m.inventory) as MonsterWithInventory[];
   }, [catalog, inventory]);
@@ -54,7 +58,7 @@ export default function Home() {
   const tiers: Tier[] = ["S", "A", "B", "C", "D", "F"];
 
   const totalCans = inventory.reduce((sum, inv) => sum + inv.quantity, 0);
-  const uniqueFlavors = inventory.length;
+  const uniqueFlavors = new Set(inventory.map((inv) => inv.catalogId)).size;
   const avgRating = inventory.length
     ? (inventory.reduce((sum, inv) => sum + inv.rating, 0) / inventory.length).toFixed(1)
     : "0";
@@ -204,12 +208,13 @@ function InventoryCard({
   const tierStyle = TIER_COLORS[inv.tier];
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
       onClick={onClick}
-      className="group flex gap-4 bg-[#111] border border-[#222] rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22]"
+      className="group flex gap-4 bg-[#111] border border-[#222] rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22] text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
     >
       {/* Image */}
       <div className="relative w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 bg-[#0a0a0a] rounded-md overflow-hidden">
@@ -253,7 +258,7 @@ function InventoryCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }
 
@@ -281,13 +286,14 @@ function TierRow({
       <div className="flex-1 p-3 flex flex-wrap gap-3 min-h-[80px] items-center">
         {monsters.length > 0 ? (
           monsters.map((monster, i) => (
-            <motion.div
+            <motion.button
+              type="button"
               key={monster.id}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05 }}
               onClick={() => onMonsterClick(monster)}
-              className="group relative w-16 h-24 sm:w-20 sm:h-28 bg-[#111] border border-[#333] hover:border-[#90C53F] rounded-md overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-[0_0_10px_#90C53F33] hover:-translate-y-1"
+              className="group relative w-16 h-24 sm:w-20 sm:h-28 bg-[#111] border border-[#333] hover:border-[#90C53F] rounded-md overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-[0_0_10px_#90C53F33] hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F]"
             >
               <Image
                 src={monster.imagePath}
@@ -301,7 +307,7 @@ function TierRow({
                   {monster.name}
                 </p>
               </div>
-            </motion.div>
+            </motion.button>
           ))
         ) : (
           <span className="text-[#333] text-xs w-full text-center">
@@ -323,6 +329,37 @@ function MonsterModal({
 }) {
   const inv = monster.inventory;
   const tierStyle = inv ? TIER_COLORS[inv.tier] : null;
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [onClose]
+  );
+
+  useEffect(() => {
+    const closeBtn = modalRef.current?.querySelector<HTMLElement>("button");
+    closeBtn?.focus();
+  }, []);
 
   return (
     <>
@@ -335,6 +372,11 @@ function MonsterModal({
       />
 
       <motion.div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${monster.name} details`}
+        onKeyDown={handleKeyDown}
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 40 }}
@@ -342,7 +384,8 @@ function MonsterModal({
       >
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 p-1.5 bg-[#222] border border-[#444] rounded-md hover:bg-[#333] transition-colors"
+          aria-label="Close"
+          className="absolute top-3 right-3 z-10 p-1.5 bg-[#222] border border-[#444] rounded-md hover:bg-[#333] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F]"
         >
           <X className="w-4 h-4" />
         </button>
