@@ -75,7 +75,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Zap className="text-[#90C53F] w-7 h-7" />
             <h1 className="text-2xl sm:text-3xl font-bold tracking-[0.2em] skew-x-[-10deg]">
-              rishabh's<span className="text-[#90C53F]">monsters</span>
+              rishabh's<span className="text-[#90C53F]"> monsters</span>
             </h1>
           </div>
 
