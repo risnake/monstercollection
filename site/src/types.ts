@@ -1,10 +1,25 @@
 export type Tier = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 
-export interface MonsterEnergy {
-  id: number;
+export type Category = 'original' | 'ultra' | 'juice' | 'cafe' | 'rehab';
+
+export interface CatalogMonster {
+  id: string;
   name: string;
+  category: Category;
   flavorProfile: string;
-  tier: Tier;
+  description: string;
   imagePath: string;
+}
+
+export interface InventoryEntry {
+  catalogId: string;
+  quantity: number;
+  rating: number;
+  tier: Tier;
   notes: string;
+  dateAdded: string;
+}
+
+export interface MonsterWithInventory extends CatalogMonster {
+  inventory?: InventoryEntry;
 }

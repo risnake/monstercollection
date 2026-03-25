@@ -1,0 +1,410 @@
+[
+  {
+    "id": "original-originalgreen",
+    "name": "Original Green",
+    "category": "original",
+    "flavorProfile": "Sweet, salty, and a little bit sour",
+    "description": "The classic that started it all. Unleash the beast.",
+    "imagePath": "/images/original/originalgreen.webp"
+  },
+  {
+    "id": "original-zerosugar",
+    "name": "Zero Sugar",
+    "category": "original",
+    "flavorProfile": "Classic Monster taste, zero sugar",
+    "description": "All the flavor of Original Green with zero sugar.",
+    "imagePath": "/images/original/zerosugar.webp"
+  },
+  {
+    "id": "original-locarb",
+    "name": "Lo-Carb",
+    "category": "original",
+    "flavorProfile": "Lighter citrus energy blend",
+    "description": "A lighter take on the original with reduced carbs.",
+    "imagePath": "/images/original/locarb.webp"
+  },
+  {
+    "id": "original-electricblue",
+    "name": "Electric Blue",
+    "category": "original",
+    "flavorProfile": "Blue raspberry citrus",
+    "description": "An electrifying blue raspberry energy experience.",
+    "imagePath": "/images/original/electricblue.webp"
+  },
+  {
+    "id": "original-landonorris",
+    "name": "Lando Norris",
+    "category": "original",
+    "flavorProfile": "Tropical citrus punch",
+    "description": "Special edition collab with F1 driver Lando Norris.",
+    "imagePath": "/images/original/landonorris.webp"
+  },
+  {
+    "id": "original-nitrosuperdry",
+    "name": "Nitro Super Dry",
+    "category": "original",
+    "flavorProfile": "Dry, crisp, nitrogen-infused",
+    "description": "Nitrogen-infused for a smooth, creamy texture.",
+    "imagePath": "/images/original/nitrosuperdry.webp"
+  },
+  {
+    "id": "original-orangledreamsicle",
+    "name": "Orange Dreamsicle",
+    "category": "original",
+    "flavorProfile": "Creamy orange vanilla",
+    "description": "Tastes like the classic frozen treat.",
+    "imagePath": "/images/original/orangledreamsicle.webp"
+  },
+  {
+    "id": "original-reserveorangedreamsicle",
+    "name": "Reserve Orange Dreamsicle",
+    "category": "original",
+    "flavorProfile": "Premium creamy orange vanilla",
+    "description": "Reserve edition of the orange dreamsicle flavor.",
+    "imagePath": "/images/original/reserveorangedreamsicle.webp"
+  },
+  {
+    "id": "original-reservepeachesandcream",
+    "name": "Reserve Peaches and Cream",
+    "category": "original",
+    "flavorProfile": "Smooth peach cream",
+    "description": "A velvety peach and cream blend from the Reserve line.",
+    "imagePath": "/images/original/reservepeachesandcream.webp"
+  },
+  {
+    "id": "original-strawberryshot",
+    "name": "Strawberry Shot",
+    "category": "original",
+    "flavorProfile": "Concentrated strawberry blast",
+    "description": "A concentrated burst of strawberry energy.",
+    "imagePath": "/images/original/strawberryshot.webp"
+  },
+  {
+    "id": "original-superpremiumimport",
+    "name": "Super Premium Import",
+    "category": "original",
+    "flavorProfile": "Premium European energy blend",
+    "description": "Imported premium blend with a refined taste.",
+    "imagePath": "/images/original/superpremiumimport.webp"
+  },
+  {
+    "id": "original-zerosugarstrawberryshot",
+    "name": "Zero Sugar Strawberry Shot",
+    "category": "original",
+    "flavorProfile": "Sugar-free strawberry blast",
+    "description": "All the strawberry flavor with zero sugar.",
+    "imagePath": "/images/original/zerosugarstrawberryshot.webp"
+  },
+  {
+    "id": "ultra-white",
+    "name": "Ultra White",
+    "category": "ultra",
+    "flavorProfile": "Light citrus blend",
+    "description": "A lighter, less sweet citrus energy drink.",
+    "imagePath": "/images/ultra/white.webp"
+  },
+  {
+    "id": "ultra-blue",
+    "name": "Ultra Blue",
+    "category": "ultra",
+    "flavorProfile": "Crisp citrus blueberry",
+    "description": "A refreshing blend of citrus and blueberry.",
+    "imagePath": "/images/ultra/blue.webp"
+  },
+  {
+    "id": "ultra-red",
+    "name": "Ultra Red",
+    "category": "ultra",
+    "flavorProfile": "Mixed berry citrus",
+    "description": "Cranberry and mixed berry energy experience.",
+    "imagePath": "/images/ultra/red.webp"
+  },
+  {
+    "id": "ultra-black",
+    "name": "Ultra Black",
+    "category": "ultra",
+    "flavorProfile": "Black cherry",
+    "description": "Dark, crisp black cherry energy.",
+    "imagePath": "/images/ultra/black.webp"
+  },
+  {
+    "id": "ultra-sunrise",
+    "name": "Ultra Sunrise",
+    "category": "ultra",
+    "flavorProfile": "Crisp citrus and orange",
+    "description": "Great for morning energy with orange citrus flavors.",
+    "imagePath": "/images/ultra/sunrise.webp"
+  },
+  {
+    "id": "ultra-violet",
+    "name": "Ultra Violet",
+    "category": "ultra",
+    "flavorProfile": "Citrus grape",
+    "description": "A unique citrus and grape blend.",
+    "imagePath": "/images/ultra/violet.webp"
+  },
+  {
+    "id": "ultra-paradise",
+    "name": "Ultra Paradise",
+    "category": "ultra",
+    "flavorProfile": "Green apple kiwi",
+    "description": "Tropical paradise with green apple and kiwi notes.",
+    "imagePath": "/images/ultra/paradise.webp"
+  },
+  {
+    "id": "ultra-rosa",
+    "name": "Ultra Rosa",
+    "category": "ultra",
+    "flavorProfile": "Guava strawberry",
+    "description": "A delicate guava-strawberry fusion.",
+    "imagePath": "/images/ultra/rosa.webp"
+  },
+  {
+    "id": "ultra-watermelon",
+    "name": "Ultra Watermelon",
+    "category": "ultra",
+    "flavorProfile": "Refreshing watermelon",
+    "description": "Crisp, cold watermelon flavor.",
+    "imagePath": "/images/ultra/watermelon.webp"
+  },
+  {
+    "id": "ultra-fiestamango",
+    "name": "Ultra Fiesta Mango",
+    "category": "ultra",
+    "flavorProfile": "Tropical mango",
+    "description": "Juicy mango flavor in zero-sugar Ultra form.",
+    "imagePath": "/images/ultra/fiestamango.webp"
+  },
+  {
+    "id": "ultra-peachykeen",
+    "name": "Ultra Peachy Keen",
+    "category": "ultra",
+    "flavorProfile": "Sweet golden peach",
+    "description": "Peachy perfection with zero sugar.",
+    "imagePath": "/images/ultra/peachykeen.webp"
+  },
+  {
+    "id": "ultra-strawberrydreams",
+    "name": "Ultra Strawberry Dreams",
+    "category": "ultra",
+    "flavorProfile": "Sweet strawberry",
+    "description": "A dreamy strawberry blast.",
+    "imagePath": "/images/ultra/strawberrydreams.webp"
+  },
+  {
+    "id": "ultra-fantasyrubyred",
+    "name": "Ultra Fantasy Ruby Red",
+    "category": "ultra",
+    "flavorProfile": "Ruby red grapefruit",
+    "description": "Bold grapefruit fantasy flavor.",
+    "imagePath": "/images/ultra/fantasyrubyred.webp"
+  },
+  {
+    "id": "ultra-bluehaiwan",
+    "name": "Ultra Blue Hawaiian",
+    "category": "ultra",
+    "flavorProfile": "Tropical pineapple coconut",
+    "description": "Hawaiian-inspired tropical blend.",
+    "imagePath": "/images/ultra/bluehaiwan.webp"
+  },
+  {
+    "id": "ultra-viceguava",
+    "name": "Ultra Vice Guava",
+    "category": "ultra",
+    "flavorProfile": "Tropical guava",
+    "description": "Exotic guava with a tropical twist.",
+    "imagePath": "/images/ultra/viceguava.webp"
+  },
+  {
+    "id": "ultra-wildpassion",
+    "name": "Ultra Wild Passion",
+    "category": "ultra",
+    "flavorProfile": "Passion fruit blend",
+    "description": "Wild passion fruit energy experience.",
+    "imagePath": "/images/ultra/wildpassion.webp"
+  },
+  {
+    "id": "ultra-punkpunch",
+    "name": "Ultra Punk Punch",
+    "category": "ultra",
+    "flavorProfile": "Fruity punk punch",
+    "description": "Bold, rebellious fruit punch flavor.",
+    "imagePath": "/images/ultra/punkpunch.webp"
+  },
+  {
+    "id": "ultra-redwhitebluerazz",
+    "name": "Ultra Red White & Blue Razz",
+    "category": "ultra",
+    "flavorProfile": "Blue raspberry patriotic punch",
+    "description": "Patriotic blue raspberry energy.",
+    "imagePath": "/images/ultra/redwhitebluerazz.webp"
+  },
+  {
+    "id": "juice-pipelinepunch",
+    "name": "Pipeline Punch",
+    "category": "juice",
+    "flavorProfile": "Passion fruit, orange, guava",
+    "description": "Incredibly smooth and sweet juice blend.",
+    "imagePath": "/images/juice/pipelinepunch.webp"
+  },
+  {
+    "id": "juice-mangoloco",
+    "name": "Mango Loco",
+    "category": "juice",
+    "flavorProfile": "Mango juice blend",
+    "description": "One of the best Juice Monster flavors.",
+    "imagePath": "/images/juice/mangoloco.webp"
+  },
+  {
+    "id": "juice-pacificpunch",
+    "name": "Pacific Punch",
+    "category": "juice",
+    "flavorProfile": "Tropical Pacific fruit punch",
+    "description": "A refreshing Pacific island fruit punch.",
+    "imagePath": "/images/juice/pacificpunch.webp"
+  },
+  {
+    "id": "juice-khaotic",
+    "name": "Khaotic",
+    "category": "juice",
+    "flavorProfile": "Orange juice blend",
+    "description": "Chaotic orange juice energy.",
+    "imagePath": "/images/juice/khaotic.webp"
+  },
+  {
+    "id": "juice-riopunch",
+    "name": "Rio Punch",
+    "category": "juice",
+    "flavorProfile": "Brazilian tropical punch",
+    "description": "Rio-inspired tropical punch blend.",
+    "imagePath": "/images/juice/riopunch.webp"
+  },
+  {
+    "id": "juice-aussiestylelemonade",
+    "name": "Aussie Style Lemonade",
+    "category": "juice",
+    "flavorProfile": "Fresh lemonade",
+    "description": "Australian-style lemonade energy.",
+    "imagePath": "/images/juice/aussiestylelemonade.webp"
+  },
+  {
+    "id": "juice-badapple",
+    "name": "Bad Apple",
+    "category": "juice",
+    "flavorProfile": "Crisp apple juice",
+    "description": "Bold, crisp apple juice energy.",
+    "imagePath": "/images/juice/badapple.webp"
+  },
+  {
+    "id": "juice-vikingberry",
+    "name": "Viking Berry",
+    "category": "juice",
+    "flavorProfile": "Nordic mixed berry",
+    "description": "Viking-inspired berry juice blend.",
+    "imagePath": "/images/juice/vikingberry.webp"
+  },
+  {
+    "id": "juice-voodogrape",
+    "name": "Voodoo Grape",
+    "category": "juice",
+    "flavorProfile": "Dark grape juice",
+    "description": "Mysterious grape juice energy.",
+    "imagePath": "/images/juice/voodogrape.webp"
+  },
+  {
+    "id": "cafe-java-meanbean",
+    "name": "Java Mean Bean",
+    "category": "cafe",
+    "flavorProfile": "Rich coffee blend",
+    "description": "Premium brewed coffee energy.",
+    "imagePath": "/images/cafe/java-meanbean.webp"
+  },
+  {
+    "id": "cafe-java-cafelatte",
+    "name": "Java Cafe Latte",
+    "category": "cafe",
+    "flavorProfile": "Smooth cafe latte",
+    "description": "Creamy cafe latte with Monster energy.",
+    "imagePath": "/images/cafe/java-cafelatte.webp"
+  },
+  {
+    "id": "cafe-java-irishcream",
+    "name": "Java Irish Cream",
+    "category": "cafe",
+    "flavorProfile": "Irish cream coffee",
+    "description": "Rich Irish cream flavored coffee energy.",
+    "imagePath": "/images/cafe/java-irishcream.webp"
+  },
+  {
+    "id": "cafe-javamonster300-frenchvanilla",
+    "name": "Java Monster 300 French Vanilla",
+    "category": "cafe",
+    "flavorProfile": "French vanilla coffee",
+    "description": "Triple-shot French vanilla coffee energy.",
+    "imagePath": "/images/cafe/javamonster300-frenchvanilla.webp"
+  },
+  {
+    "id": "cafe-javamonster300-mocha",
+    "name": "Java Monster 300 Mocha",
+    "category": "cafe",
+    "flavorProfile": "Chocolate mocha coffee",
+    "description": "Triple-shot chocolate mocha energy.",
+    "imagePath": "/images/cafe/javamonster300-mocha.webp"
+  },
+  {
+    "id": "cafe-killerbrew-locamoca",
+    "name": "Killer Brew Loca Moca",
+    "category": "cafe",
+    "flavorProfile": "Bold mocha blend",
+    "description": "Extra strong mocha coffee energy.",
+    "imagePath": "/images/cafe/killerbrew-locamoca.webp"
+  },
+  {
+    "id": "cafe-killerbrew-meanbean",
+    "name": "Killer Brew Mean Bean",
+    "category": "cafe",
+    "flavorProfile": "Strong dark coffee",
+    "description": "Extra strong Mean Bean coffee energy.",
+    "imagePath": "/images/cafe/killerbrew-meanbean.webp"
+  },
+  {
+    "id": "rehab-tea+lemonade",
+    "name": "Rehab Tea + Lemonade",
+    "category": "rehab",
+    "flavorProfile": "Arnold Palmer style tea lemonade",
+    "description": "Classic tea and lemonade recovery blend.",
+    "imagePath": "/images/rehab/tea+lemonade.webp"
+  },
+  {
+    "id": "rehab-peachtea",
+    "name": "Rehab Peach Tea",
+    "category": "rehab",
+    "flavorProfile": "Sweet peach iced tea",
+    "description": "Refreshing peach tea recovery energy.",
+    "imagePath": "/images/rehab/peachtea.webp"
+  },
+  {
+    "id": "rehab-greentea",
+    "name": "Rehab Green Tea",
+    "category": "rehab",
+    "flavorProfile": "Light green tea",
+    "description": "Antioxidant-rich green tea recovery.",
+    "imagePath": "/images/rehab/greentea.webp"
+  },
+  {
+    "id": "rehab-strawberrylemonade",
+    "name": "Rehab Strawberry Lemonade",
+    "category": "rehab",
+    "flavorProfile": "Strawberry lemonade",
+    "description": "Sweet strawberry lemonade recovery blend.",
+    "imagePath": "/images/rehab/strawberrylemonade.webp"
+  },
+  {
+    "id": "rehab-wildberrytea",
+    "name": "Rehab Wild Berry Tea",
+    "category": "rehab",
+    "flavorProfile": "Wild berry iced tea",
+    "description": "Mixed berry tea recovery energy.",
+    "imagePath": "/images/rehab/wildberrytea.webp"
+  }
+]

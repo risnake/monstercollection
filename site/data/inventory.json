@@ -1,0 +1,66 @@
+[
+  {
+    "catalogId": "original-originalgreen",
+    "quantity": 3,
+    "rating": 8,
+    "tier": "A",
+    "notes": "The classic that started it all. Always keep a few on hand.",
+    "dateAdded": "2025-01-15"
+  },
+  {
+    "catalogId": "juice-pipelinepunch",
+    "quantity": 5,
+    "rating": 10,
+    "tier": "S",
+    "notes": "Incredibly smooth and sweet. Top tier flavor.",
+    "dateAdded": "2025-01-20"
+  },
+  {
+    "catalogId": "juice-mangoloco",
+    "quantity": 4,
+    "rating": 10,
+    "tier": "S",
+    "notes": "One of the best Juice Monster flavors ever made.",
+    "dateAdded": "2025-02-01"
+  },
+  {
+    "catalogId": "ultra-sunrise",
+    "quantity": 2,
+    "rating": 6,
+    "tier": "B",
+    "notes": "Great for morning energy.",
+    "dateAdded": "2025-02-10"
+  },
+  {
+    "catalogId": "ultra-paradise",
+    "quantity": 6,
+    "rating": 9,
+    "tier": "S",
+    "notes": "Green apple kiwi perfection. Can't stop buying these.",
+    "dateAdded": "2025-03-01"
+  },
+  {
+    "catalogId": "ultra-white",
+    "quantity": 2,
+    "rating": 7,
+    "tier": "A",
+    "notes": "Clean, light flavor. Good daily driver.",
+    "dateAdded": "2025-03-05"
+  },
+  {
+    "catalogId": "ultra-rosa",
+    "quantity": 1,
+    "rating": 7,
+    "tier": "A",
+    "notes": "Delicate guava flavor, surprisingly good.",
+    "dateAdded": "2025-03-10"
+  },
+  {
+    "catalogId": "rehab-tea+lemonade",
+    "quantity": 2,
+    "rating": 5,
+    "tier": "C",
+    "notes": "Decent recovery drink, nothing special.",
+    "dateAdded": "2025-03-15"
+  }
+]
