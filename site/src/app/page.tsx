@@ -1,171 +1,463 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, List, Grid3X3, Beaker } from "lucide-react";
-import data from "../../data/monsters.json";
-import { MonsterEnergy, Tier } from "../types";
+import Image from "next/image";
+import {
+  Zap,
+  List,
+  Package,
+  Star,
+  Hash,
+  X,
+} from "lucide-react";
+import catalogData from "../../data/catalog.json";
+import inventoryData from "../../data/inventory.json";
+import {
+  CatalogMonster,
+  InventoryEntry,
+  MonsterWithInventory,
+  Tier,
+} from "../types";
+
+const TIER_COLORS: Record<Tier, { text: string; bg: string; border: string; glow: string }> = {
+  S: { text: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/50", glow: "shadow-[0_0_15px_rgba(239,68,68,0.3)]" },
+  A: { text: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/50", glow: "shadow-[0_0_15px_rgba(249,115,22,0.3)]" },
+  B: { text: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/50", glow: "shadow-[0_0_15px_rgba(234,179,8,0.3)]" },
+  C: { text: "text-lime-400", bg: "bg-lime-500/10", border: "border-lime-500/50", glow: "shadow-[0_0_15px_rgba(132,204,22,0.3)]" },
+  D: { text: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/50", glow: "shadow-[0_0_15px_rgba(52,211,153,0.3)]" },
+  F: { text: "text-gray-400", bg: "bg-gray-500/10", border: "border-gray-500/50", glow: "shadow-[0_0_15px_rgba(156,163,175,0.3)]" },
+};
+
+type View = "inventory" | "tier";
 
 export default function Home() {
-  const [monsters, setMonsters] = useState<MonsterEnergy[]>([]);
-  const [view, setView] = useState<"grid" | "tier">("tier");
+  const [catalog, setCatalog] = useState<CatalogMonster[]>([]);
+  const [inventory, setInventory] = useState<InventoryEntry[]>([]);
+  const [view, setView] = useState<View>("inventory");
+  const [selectedMonster, setSelectedMonster] = useState<MonsterWithInventory | null>(null);
 
   useEffect(() => {
-    // In a real app we'd fetch from an API route, here data is imported static
-    setMonsters(data as MonsterEnergy[]);
+    setCatalog(catalogData as CatalogMonster[]);
+    setInventory(inventoryData as InventoryEntry[]);
   }, []);
+
+  const inventoryMonsters: MonsterWithInventory[] = useMemo(() => {
+    const inventoryMap = new Map<string, InventoryEntry>();
+    for (const inv of inventory) {
+      inventoryMap.set(inv.catalogId, inv);
+    }
+    return catalog
+      .map((m) => ({
+        ...m,
+        inventory: inventoryMap.get(m.id),
+      }))
+      .filter((m) => m.inventory) as MonsterWithInventory[];
+  }, [catalog, inventory]);
 
   const tiers: Tier[] = ["S", "A", "B", "C", "D", "F"];
 
-  return (
-    <main className="min-h-screen bg-background text-foreground uppercase tracking-widest relative overflow-hidden">
-      {/* Background neon elements */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[var(--color-monster-glow)] rounded-full blur-[120px] pointer-events-none opacity-20" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[var(--color-monster-glow)] rounded-full blur-[150px] pointer-events-none opacity-10" />
+  const totalCans = inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+  const uniqueFlavors = new Set(inventory.map((inv) => inv.catalogId)).size;
+  const avgRating = inventory.length
+    ? (inventory.reduce((sum, inv) => sum + inv.rating, 0) / inventory.length).toFixed(1)
+    : "0";
 
-      <header className="border-b border-border bg-[#080808]/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center">
+  return (
+    <main className="min-h-screen bg-[#080808] text-[#e5e5e5] uppercase tracking-wider relative overflow-hidden">
+      {/* Background glow */}
+      <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#90C53F22] rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#90C53F11] rounded-full blur-[150px] pointer-events-none" />
+
+      {/* Header */}
+      <header className="border-b border-[#222] bg-[#080808]/90 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <Zap className="text-[var(--color-monster)] w-8 h-8" />
-            <h1 className="text-3xl font-bold tracking-[0.2em] transform skew-x-[-10deg]">
-              MNSTR<span className="text-[var(--color-monster)]">.</span>CLCTN
+            <Zap className="text-[#90C53F] w-7 h-7" />
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-[0.2em] skew-x-[-10deg]">
+              MNSTR<span className="text-[#90C53F]">.</span>CLCTN
             </h1>
           </div>
-          
-          <nav className="flex items-center gap-4 mt-4 sm:mt-0">
-            <button
-              onClick={() => setView("grid")}
-              className={`flex items-center gap-2 px-4 py-2 border transition-all duration-300 transform skew-x-[-10deg] ${
-                view === "grid" 
-                  ? "border-[var(--color-monster)] text-[var(--color-monster)] shadow-[0_0_10px_var(--color-monster-glow)]" 
-                  : "border-border text-gray-500 hover:text-white"
-              }`}
-            >
-              <Grid3X3 className="w-4 h-4" />
-              <span>COLLECTION</span>
-            </button>
-            <button
-              onClick={() => setView("tier")}
-              className={`flex items-center gap-2 px-4 py-2 border transition-all duration-300 transform skew-x-[-10deg] ${
-                view === "tier" 
-                  ? "border-[var(--color-monster)] text-[var(--color-monster)] shadow-[0_0_10px_var(--color-monster-glow)]" 
-                  : "border-border text-gray-500 hover:text-white"
-              }`}
-            >
-              <List className="w-4 h-4" />
-              <span>TIER LIST</span>
-            </button>
+
+          <nav className="flex items-center gap-2 sm:gap-3">
+            {([
+              { key: "inventory" as View, icon: Package, label: "MY CANS" },
+              { key: "tier" as View, icon: List, label: "TIER LIST" },
+            ]).map(({ key, icon: Icon, label }) => (
+              <button
+                key={key}
+                onClick={() => setView(key)}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 border text-xs sm:text-sm transition-all duration-300 skew-x-[-10deg] ${
+                  view === key
+                    ? "border-[#90C53F] text-[#90C53F] shadow-[0_0_10px_#90C53F44] bg-[#90C53F08]"
+                    : "border-[#333] text-[#666] hover:text-white hover:border-[#555]"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
           </nav>
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-12">
+      {/* Stats Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="border-b border-[#1a1a1a] bg-[#0c0c0c]"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-center gap-6 sm:gap-12 text-xs sm:text-sm">
+          <Stat icon={<Package className="w-4 h-4" />} value={String(totalCans)} label="TOTAL CANS" />
+          <Stat icon={<Hash className="w-4 h-4" />} value={String(uniqueFlavors)} label="FLAVORS" />
+          <Stat icon={<Star className="w-4 h-4" />} value={avgRating} label="AVG RATING" />
+        </div>
+      </motion.div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <AnimatePresence mode="wait">
-          {view === "grid" ? (
+          {view === "inventory" && (
             <motion.div
-              key="grid"
+              key="inventory"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
             >
-              {monsters.map((monster, i) => (
-                <CanCard key={monster.id} monster={monster} index={i} />
-              ))}
+              {inventoryMonsters.length === 0 ? (
+                <div className="text-center py-20 text-[#444]">
+                  <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">NO CANS IN YOUR COLLECTION</p>
+                  <p className="text-sm mt-2 normal-case tracking-normal">
+                    Add monsters to inventory.json to start your collection
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {inventoryMonsters.map((monster, i) => (
+                    <InventoryCard
+                      key={monster.id}
+                      monster={monster}
+                      index={i}
+                      onClick={() => setSelectedMonster(monster)}
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
-          ) : (
+          )}
+
+          {view === "tier" && (
             <motion.div
               key="tier"
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              className="flex flex-col gap-6"
+              exit={{ opacity: 0, scale: 1.02 }}
+              className="flex flex-col gap-4"
             >
               {tiers.map((tier) => (
-                <TierSection key={tier} tier={tier} monsters={monsters.filter(m => m.tier === tier)} />
+                <TierRow
+                  key={tier}
+                  tier={tier}
+                  monsters={inventoryMonsters.filter(
+                    (m) => m.inventory?.tier === tier
+                  )}
+                  onMonsterClick={(m) => setSelectedMonster(m)}
+                />
               ))}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {selectedMonster && (
+          <MonsterModal
+            monster={selectedMonster}
+            onClose={() => setSelectedMonster(null)}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
 
-const CanCard = ({ monster, index }: { monster: MonsterEnergy; index: number }) => {
+/* ─── Stat Badge ─── */
+function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      className="group relative bg-[#111] border border-[#222] overflow-hidden rounded-md transition-all hover:border-[var(--color-monster)]"
+    <div className="flex items-center gap-2 text-[#888]">
+      <span className="text-[#90C53F]">{icon}</span>
+      <span className="text-white font-bold text-base sm:text-lg">{value}</span>
+      <span className="text-[10px] sm:text-xs">{label}</span>
+    </div>
+  );
+}
+
+/* ─── Inventory Card ─── */
+function InventoryCard({
+  monster,
+  index,
+  onClick,
+}: {
+  monster: MonsterWithInventory;
+  index: number;
+  onClick: () => void;
+}) {
+  const inv = monster.inventory!;
+  const tierStyle = TIER_COLORS[inv.tier];
+
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      onClick={onClick}
+      className="group flex gap-4 bg-[#111] border border-[#222] rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#90C53F] hover:shadow-[0_0_20px_#90C53F22] text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#000] to-transparent opacity-80 z-10" />
-      <div className="relative h-[300px] w-full p-6 flex justify-center items-center">
-        {/* Placeholder for image */}
-        <div className="w-24 h-48 border-2 border-dashed border-[#333] group-hover:border-[var(--color-monster)] transition-colors flex items-center justify-center text-[#444] group-hover:text-[var(--color-monster)] transform group-hover:scale-110 group-hover:-rotate-3 duration-500 z-0">
-          IMAGE
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 p-4 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-          <div className="text-[var(--color-monster)] font-bold text-xl mb-1 flex justify-between items-center">
-            {monster.name}
-            <span className="bg-[#222] text-[#fff] text-xs px-2 py-1 rounded-sm border border-[#333]">
-              {monster.tier} TIER
+      {/* Image */}
+      <div className="relative w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 bg-[#0a0a0a] rounded-md overflow-hidden">
+        <Image
+          src={monster.imagePath}
+          alt={monster.name}
+          fill
+          className="object-contain p-1"
+          sizes="96px"
+        />
+      </div>
+
+      {/* Details */}
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+        <div>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-sm sm:text-base font-bold truncate group-hover:text-[#90C53F] transition-colors">
+              {monster.name}
+            </h3>
+            <span
+              className={`text-xs font-black px-2 py-0.5 border rounded-sm shrink-0 skew-x-[-10deg] ${tierStyle.text} ${tierStyle.border} ${tierStyle.bg}`}
+            >
+              {inv.tier}
             </span>
           </div>
-          <p className="text-sm text-gray-400 font-medium flex items-center gap-2">
-            <Beaker className="w-3 h-3" />
+          <p className="text-[11px] text-[#666] mt-1 normal-case tracking-normal">
             {monster.flavorProfile}
           </p>
         </div>
-      </div>
-    </motion.div>
-  );
-};
 
-const TierSection = ({ tier, monsters }: { tier: Tier; monsters: MonsterEnergy[] }) => {
-  const getTierColor = (tier: Tier) => {
-    switch(tier) {
-      case 'S': return 'text-[#ff7f7f] border-[#ff7f7f] shadow-[0_0_15px_rgba(255,127,127,0.3)]';
-      case 'A': return 'text-[#ffbf7f] border-[#ffbf7f] shadow-[0_0_15px_rgba(255,191,127,0.3)]';
-      case 'B': return 'text-[#ffdf7f] border-[#ffdf7f] shadow-[0_0_15px_rgba(255,223,127,0.3)]';
-      case 'C': return 'text-[#ffff7f] border-[#ffff7f] shadow-[0_0_15px_rgba(255,255,127,0.3)]';
-      case 'D': return 'text-[#bfff7f] border-[#bfff7f] shadow-[0_0_15px_rgba(191,255,127,0.3)]';
-      case 'F': return 'text-[#7fff7f] border-[#7fff7f] shadow-[0_0_15px_rgba(127,255,127,0.3)]';
-      default: return 'text-white border-white';
-    }
-  };
+        <div className="flex items-center gap-4 mt-3">
+          <div className="flex items-center gap-1.5 text-xs text-[#888]">
+            <Package className="w-3.5 h-3.5 text-[#90C53F]" />
+            <span className="font-bold text-white">{inv.quantity}</span>
+            <span className="text-[10px]">CANS</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-[#888]">
+            <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+            <span className="font-bold text-white">{inv.rating}</span>
+            <span className="text-[10px]">/10</span>
+          </div>
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+/* ─── Tier Row ─── */
+function TierRow({
+  tier,
+  monsters,
+  onMonsterClick,
+}: {
+  tier: Tier;
+  monsters: MonsterWithInventory[];
+  onMonsterClick: (m: MonsterWithInventory) => void;
+}) {
+  const style = TIER_COLORS[tier];
 
   return (
-    <div className="flex flex-col sm:flex-row bg-[#0c0c0c] border border-[#222] rounded-md overflow-hidden">
-      <div className={`w-full sm:w-24 sm:min-w-[6rem] flex items-center justify-center p-4 border-b sm:border-b-0 sm:border-r bg-[#111] ${getTierColor(tier)}`}>
-        <span className="text-4xl sm:text-5xl font-black transform skew-x-[-15deg]">{tier}</span>
+    <div className="flex flex-col sm:flex-row bg-[#0c0c0c] border border-[#222] rounded-lg overflow-hidden">
+      <div
+        className={`w-full sm:w-20 sm:min-w-[5rem] flex items-center justify-center p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-[#222] ${style.bg} ${style.text} ${style.glow}`}
+      >
+        <span className="text-3xl sm:text-4xl font-black skew-x-[-15deg]">
+          {tier}
+        </span>
       </div>
-      <div className="flex-1 p-4 grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 min-h-[120px]">
+      <div className="flex-1 p-3 flex flex-wrap gap-3 min-h-[80px] items-center">
         {monsters.length > 0 ? (
           monsters.map((monster, i) => (
-            <motion.div
+            <motion.button
+              type="button"
               key={monster.id}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-[#1a1a1a] border border-[#333] hover:border-[var(--color-monster)] p-2 rounded transform hover:-translate-y-1 transition-all cursor-pointer group"
+              onClick={() => onMonsterClick(monster)}
+              className="group relative w-16 h-24 sm:w-20 sm:h-28 bg-[#111] border border-[#333] hover:border-[#90C53F] rounded-md overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-[0_0_10px_#90C53F33] hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F]"
             >
-              <div className="h-20 w-full mb-2 bg-[#222] rounded flex items-center justify-center border border-dashed border-[#444] text-[10px] text-[#555] group-hover:border-[var(--color-monster)] text-center">
-                {monster.name}
+              <Image
+                src={monster.imagePath}
+                alt={monster.name}
+                fill
+                className="object-contain p-1 group-hover:scale-110 transition-transform duration-300"
+                sizes="80px"
+              />
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 to-transparent p-1">
+                <p className="text-[8px] sm:text-[9px] text-center font-bold truncate">
+                  {monster.name}
+                </p>
               </div>
-              <div className="text-xs font-bold text-center truncate w-full group-hover:text-[var(--color-monster)] transition-colors">
-                {monster.name}
-              </div>
-            </motion.div>
+            </motion.button>
           ))
         ) : (
-          <div className="col-span-full flex items-center justify-center text-[#333] text-sm">
+          <span className="text-[#333] text-xs w-full text-center">
             NO CANS IN THIS TIER
-          </div>
+          </span>
         )}
       </div>
     </div>
   );
-};
+}
+
+/* ─── Monster Detail Modal ─── */
+function MonsterModal({
+  monster,
+  onClose,
+}: {
+  monster: MonsterWithInventory;
+  onClose: () => void;
+}) {
+  const inv = monster.inventory;
+  const tierStyle = inv ? TIER_COLORS[inv.tier] : null;
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [onClose]
+  );
+
+  useEffect(() => {
+    const closeBtn = modalRef.current?.querySelector<HTMLElement>("button");
+    closeBtn?.focus();
+  }, []);
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
+      />
+
+      <motion.div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${monster.name} details`}
+        onKeyDown={handleKeyDown}
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 40 }}
+        className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-lg bg-[#111] border border-[#333] rounded-xl z-[70] overflow-hidden flex flex-col max-h-[90vh]"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 z-10 p-1.5 bg-[#222] border border-[#444] rounded-md hover:bg-[#333] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#90C53F]"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="relative w-full h-64 sm:h-72 bg-[#0a0a0a] flex-shrink-0">
+          <Image
+            src={monster.imagePath}
+            alt={monster.name}
+            fill
+            className="object-contain p-6"
+            sizes="(max-width: 640px) 100vw, 512px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent" />
+        </div>
+
+        <div className="p-6 overflow-y-auto">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <h2 className="text-xl font-bold">{monster.name}</h2>
+              <span className="text-xs text-[#90C53F] capitalize">{monster.category}</span>
+            </div>
+            {inv && tierStyle && (
+              <span
+                className={`text-lg font-black px-3 py-1 border rounded-sm skew-x-[-10deg] ${tierStyle.text} ${tierStyle.border} ${tierStyle.bg}`}
+              >
+                {inv.tier}
+              </span>
+            )}
+          </div>
+
+          <p className="text-sm text-[#aaa] normal-case tracking-normal mb-4">
+            {monster.description}
+          </p>
+
+          <div className="text-xs text-[#666] normal-case tracking-normal mb-4">
+            <span className="text-[#90C53F] uppercase tracking-wider font-bold text-[10px]">
+              Flavor Profile
+            </span>
+            <p className="mt-1">{monster.flavorProfile}</p>
+          </div>
+
+          {inv && tierStyle && (
+            <div className="bg-[#0a0a0a] border border-[#222] rounded-lg p-4 space-y-3">
+              <p className="text-[10px] text-[#90C53F] uppercase tracking-widest font-bold mb-2">
+                Your Collection
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-white">{inv.quantity}</p>
+                  <p className="text-[10px] text-[#666]">CANS</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-yellow-400">{inv.rating}/10</p>
+                  <p className="text-[10px] text-[#666]">RATING</p>
+                </div>
+                <div className="text-center">
+                  <p className={`text-lg font-bold ${tierStyle.text}`}>{inv.tier}</p>
+                  <p className="text-[10px] text-[#666]">TIER</p>
+                </div>
+              </div>
+              {inv.notes && (
+                <p className="text-xs text-[#888] normal-case tracking-normal border-t border-[#222] pt-3 mt-3">
+                  &ldquo;{inv.notes}&rdquo;
+                </p>
+              )}
+              <p className="text-[10px] text-[#555] normal-case tracking-normal">
+                Added {inv.dateAdded}
+              </p>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </>
+  );
+}

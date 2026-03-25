@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import { Rajdhani } from "next/font/google";
 import "./globals.css";
-
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Monster Energy Collection",
@@ -20,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${rajdhani.variable} antialiased`}>
+      <body className="antialiased">
         {children}
       </body>
     </html>
